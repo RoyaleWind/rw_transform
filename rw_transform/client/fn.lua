@@ -94,6 +94,22 @@ function Transition.BounceInOut(t)
     end
 end
 
+-- https://cubic-bezier.com/#1,0,.63,.44
+function CubicBezier(t, Bezier)
+    -- Cubic Bezier formula
+    local function bezier(p0, p1, p2, p3, t)
+        local u = 1 - t
+        return u^3 * p0 + 3 * u^2 * t * p1 + 3 * u * t^2 * p2 + t^3 * p3
+    end
+
+    local x = bezier(0, Bezier.x1, Bezier.x2, 1, t)
+
+
+    local y = bezier(0, Bezier.y1, Bezier.y2, 1, t)
+
+    return y
+end
+
 Transition.Functions = {
     Linear = Transition.Linear,
     EaseIn = Transition.EaseIn,

@@ -1,12 +1,12 @@
 --- Performs interpolation of entity's rotation and/or position based on the given transition function.
-local function PerformTransition(entity, initialRotation, targetRotation, initialPosition, targetPosition, duration, transitionFunc)
+local function PerformTransition(entity, initialRotation, targetRotation, initialPosition, targetPosition, duration, Bezier)
     local elapsedTime = 0.0
     local isFrozen = IsEntityPositionFrozen(entity)
     FreezeEntityPosition(entity,true)
     while elapsedTime < duration do
         elapsedTime = elapsedTime + GetFrameTime()
         local t = math.min(math.max(elapsedTime / duration, 0), 1)
-        local transition = transitionFunc(t)
+        local transition = CubicBezier(t,Bezier.x1,Bezier.y1,Bezier.x2,Bezier.y2)
 
         if initialRotation and targetRotation then
             local rotation = LerpVec3(initialRotation, targetRotation, transition)
@@ -31,43 +31,34 @@ local function PerformTransition(entity, initialRotation, targetRotation, initia
 end
 
 --- Rotates an entity from its initial rotation to a target rotation over a given duration.
-function RotateEntity(transitionName, entity, targetRotation, duration)
-    local transitionFunc = Transition.Functions[transitionName]
-    if not transitionFunc then
-        print("^1Invalid transition name provided: ^7" .. tostring(transitionName))
-        return
-    end
-
+-- CubicBezier https://cubic-bezier.com/#1,0,.63,.44
+function BezierRotateEntity(x1,y1,x2,y2, entity, targetRotation, duration)
     local initialRotation = GetEntityRotation(entity, 2)
-    PerformTransition(entity, initialRotation, targetRotation, nil, nil, duration, transitionFunc)
+
+    PerformTransition(entity, initialRotation, targetRotation, nil, nil, duration, Bezier(x1,y1,x2,y2))
 end
-exports("RotateEntity",RotateEntity)
+exports("BezierRotateEntity",BezierRotateEntity)
 
 --- Moves an entity from its initial position to a target position over a given duration.
-function MoveEntity(transitionName, entity, targetPosition, duration)
-    local transitionFunc = Transition.Functions[transitionName]
-    if not transitionFunc then
-        print("^1Invalid transition name provided: ^7" .. tostring(transitionName))
-        return
-    end
-
+-- CubicBezier https://cubic-bezier.com/#1,0,.63,.44
+function BezierMoveEntity(x1,y1,x2,y2, entity, targetPosition, duration)
     local initialPosition = GetEntityCoords(entity, true)
-    PerformTransition(entity, nil, nil, initialPosition, targetPosition, duration, transitionFunc)
+
+    PerformTransition(entity, nil, nil, initialPosition, targetPosition, duration, Bezier(x1,y1,x2,y2))
 end
-exports("MoveEntity",MoveEntity)
+exports("BezierMoveEntity",BezierMoveEntity)
 
 --- Rotates and/or moves an entity from its initial rotation/position to a target rotation/position over a given duration.
-function TransitionEntity(transitionName, entity, targetRotation, targetPosition, duration)
-    local transitionFunc = Transition.Functions[transitionName]
-    if not transitionFunc then
-        print("^1Invalid transition name provided: ^7" .. tostring(transitionName))
+--  CubicBezier https://cubic-bezier.com/#1,0,.63,.44
+function BezierTransitionCubicBezier(x1,y1,x2,y2,entity,targetRotation,targetPosition,duration)
+    if not (x1 and y1 and x2 and y2) then
+        print("^1Invalid CubicBezier provided: ^7" .. tostring(x1) .. ", " .. tostring(y1) .. ", " .. tostring(x2) .. ", " .. tostring(y2))
         return
     end
 
     local initialRotation = targetRotation and GetEntityRotation(entity, 2) or nil
     local initialPosition = targetPosition and GetEntityCoords(entity, true) or nil
 
-    PerformTransition(entity, initialRotation, targetRotation, initialPosition, targetPosition, duration, transitionFunc)
+    PerformTransition(entity, initialRotation, targetRotation, initialPosition, targetPosition, duration, Bezier(x1,y1,x2,y2))
 end
-exports("TransitionEntity",TransitionEntity)
-
+exports("BezierTransitionCubicBezier",BezierTransitionCubicBezier)
