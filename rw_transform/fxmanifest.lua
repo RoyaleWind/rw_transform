@@ -4,7 +4,7 @@ game 'gta5'
 author 'RoyaleWind'
 name 'RW Transform'
 description 'https://github.com/RoyaleWind/rw_transform'
-version '1.1.0'
+version '1.1.1'
 lua54 'on'
 contact 'https://discord.gg/T8b8q7ZN8b'
 ------------------------------
