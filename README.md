@@ -45,3 +45,11 @@ exports.rw_transform:TransitionEntity("Linear",entity,rad,pos,2)
 TransitionEntity(transitionName, entity, targetRotation, targetPosition, duration)
 ```
 ![transform rotate](https://github.com/user-attachments/assets/6785f8a9-98eb-4eaa-8111-60f28d0c75b3)
+
+# CubicBezier 
+https://cubic-bezier.com/#1,0,.63,.44
+```lua
+BezierRotateEntity(x1,y1,x2,y2, entity, targetRotation, duration)
+BezierMoveEntity(x1,y1,x2,y2, entity, targetPosition, duration)
+BezierTransitionCubicBezier(x1,y1,x2,y2,entity,targetRotation,targetPosition,duration)
+```
