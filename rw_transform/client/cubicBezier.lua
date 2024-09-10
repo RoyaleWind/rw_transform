@@ -6,7 +6,7 @@ local function PerformTransition(entity, initialRotation, targetRotation, initia
     while elapsedTime < duration do
         elapsedTime = elapsedTime + GetFrameTime()
         local t = math.min(math.max(elapsedTime / duration, 0), 1)
-        local transition = CubicBezier(t,Bezier.x1,Bezier.y1,Bezier.x2,Bezier.y2)
+        local transition = CubicBezier(t,Bezier)
 
         if initialRotation and targetRotation then
             local rotation = LerpVec3(initialRotation, targetRotation, transition)
